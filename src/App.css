@@ -1,0 +1,103 @@
+/* Basic resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body and global background */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1f1f1f;
+  color: white;
+  padding: 0 20px;
+  margin: 0;
+}
+
+/* Header styling */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* Logo */
+.logo {
+  display: block;
+  margin: 20px auto;
+  max-width: 150px;
+}
+
+/* Centered content wrapper */
+.content {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Input field styles */
+.inputField {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #333;
+  color: #fff;
+}
+
+.inputField::placeholder {
+  color: #888;
+}
+
+/* Button styles */
+.checkButton {
+  background-color: #1f8d7d;
+  border: none;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 4px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.checkButton:hover {
+  background-color: #149c6f;
+}
+
+/* Result area */
+.result {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #444;
+  border-radius: 8px;
+}
+
+.result p {
+  margin: 5px 0;
+}
+
+/* Mobile responsive design */
+@media screen and (max-width: 600px) {
+  .content {
+    padding: 15px;
+  }
+
+  .logo {
+    max-width: 120px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .checkButton, .inputField {
+    font-size: 0.9rem;
+  }
+}
