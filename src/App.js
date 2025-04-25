@@ -17,7 +17,7 @@ function App() {
 
   const handleCheck = () => {
     const approvedIDs = ['12345', '67890', 'A123'];
-    if (approvedIDs.includes(query.trim())) {
+    if (approvedIDs.map(id => id.toLowerCase()).includes(query.trim().toLowerCase())) {
       setResult({ status: 'allowed', message: '✅ Personnel is cleared for entry' });
     } else {
       setResult({ status: 'denied', message: '❌ No clearance found' });
