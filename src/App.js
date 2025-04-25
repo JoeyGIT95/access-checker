@@ -19,7 +19,7 @@ function App() {
   if (!query.trim()) return;
 
   try {
-    const response = await fetch(`https://script.google.com/macros/library/d/1IlPHIYQZGg4ShQqa7L6Qp12v1XWtBh9YYHBooKDtDGZe9KAfPeR8g3ym/2?query=${encodeURIComponent(query.trim())}`);
+    const response = await fetch(`https://script.google.com/macros/s/AKfycbxmvQwR4sTL6w7xxOIuG--ipEPvIzRho0T0_9uBETlI3fwmt-pg5Kk7dk-u25_15H6eig/exec?query=${encodeURIComponent(query.trim())}`);
     const data = await response.json();
     setResult(data);
   } catch (err) {
