@@ -27,6 +27,7 @@ h1 {
   display: block;
   margin: 20px auto;
   max-width: 150px;
+  height: auto;
 }
 
 /* Centered content wrapper */
@@ -90,7 +91,9 @@ h1 {
   }
 
   .logo {
-    max-width: 120px;
+    width: 60vw; /* Use viewport width for responsiveness */
+    max-width: 200px; /* Set a max width */
+    height: auto; /* Keep the aspect ratio intact */
   }
 
   h1 {

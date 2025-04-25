@@ -9,7 +9,7 @@ function App() {
   const [error, setError] = useState("");
 
   const PASSWORD = "escort9191"; // Required password
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9zp5du0JBY-zOUo6GtCdTzIJNktPs-jr0ufYIRgULke3Dypq1oQITO4E1mf2g7xGciA/exec"; // Google Apps Script URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9zp5du0JBY-zOUo6GtCdTzIJNktPs-jr0ufYIRgULke3Dypq1oQITO4E1mf2g7xGciA/exec";
 
   const handleLogin = () => {
     if (password === PASSWORD) {
@@ -36,18 +36,19 @@ function App() {
       const url = `${SCRIPT_URL}?query=${encodeURIComponent(query.trim())}&password=${PASSWORD}`;
       const response = await fetch(url);
       const data = await response.json();
+      
+      console.log(data); // Log the full response to inspect
 
-      // If the personnel is cleared (status "allowed")
+      // Handle the response data
       if (data.status === "allowed") {
-        // Check if start_date or end_date is missing
         if (!data.start_date || !data.end_date) {
-          data.message = "Clearance pending"; // Update message if no dates are available
-          data.start_date = "N/A"; // Optionally show N/A for missing dates
-          data.end_date = "N/A"; // Optionally show N/A for missing dates
+          data.message = "Clearance pending";
+          data.start_date = "N/A";
+          data.end_date = "N/A";
         }
       }
 
-      setResult(data); // Update the result state
+      setResult(data);
     } catch (err) {
       console.error("Fetch error:", err);
       setResult({ status: "error", message: "Error checking clearance ❌" });
@@ -57,7 +58,6 @@ function App() {
   return (
     <div className="App">
       <div className="content">
-        {/* Make sure the path to the logo is correct, and placed inside the 'public' folder */}
         <img src="/new-logo.png" alt="Logo" className="logo" />
         <h1>Changi Naval Base Access Checker</h1>
 
@@ -90,16 +90,14 @@ function App() {
 
             {result && (
               <div className="result">
-                {/* Show Personnel Name */}
-                <p>Personnel: {query}</p>
+                <p><strong>Name:</strong> {result.name || "Unknown"}</p>
                 <p>{result.message}</p>
-                {result.status === "allowed" && result.start_date && result.end_date && (
+                {result.status === "allowed" && result.start_date && result.end_date ? (
                   <p>
                     Clearance Period: {formatDate(result.start_date)} - {formatDate(result.end_date)}
                   </p>
-                )}
-                {result.status === "allowed" && (!result.start_date || !result.end_date) && (
-                  <p>Clearance pending</p> {/* Show this if either date is missing */}
+                ) : (
+                  result.status === "allowed" && <p>Clearance pending</p>
                 )}
               </div>
             )}
