@@ -46,11 +46,11 @@ function App() {
   return (
     <div className="App">
       <div className="content">
-        <img src="logo192.png" alt="Logo" className="logo" />
+        <img src="new-logo.png" alt="Logo" className="logo" />
         <h1>Changi Naval Base Access Checker</h1>
 
         {!isAuthenticated ? (
-          <div className="login">
+          <div>
             <input
               type="password"
               placeholder="Enter Password"
@@ -79,13 +79,12 @@ function App() {
             {result && (
               <div className="result">
                 <p>{result.message}</p>
-                {result.status === "allowed" && result.start_date && result.end_date && (
-                  <>
-                    <p>Personnel Name: {result.name}</p>
-                    <p>
-                      Clearance Period: {formatDate(result.start_date)} - {formatDate(result.end_date)}
-                    </p>
-                  </>
+                {result.status === "allowed" && result.start_date && result.end_date ? (
+                  <p>
+                    Clearance Period: {formatDate(result.start_date)} - {formatDate(result.end_date)}
+                  </p>
+                ) : (
+                  result.status === "allowed" && <p>Clearance pending</p>
                 )}
               </div>
             )}
