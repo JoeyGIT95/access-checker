@@ -15,14 +15,18 @@ function App() {
     }
   };
 
-  const handleCheck = () => {
-    const approvedIDs = ['12345', '67890', 'A123'];
-    if (approvedIDs.map(id => id.toLowerCase()).includes(query.trim().toLowerCase())) {
-      setResult({ status: 'allowed', message: '✅ Personnel is cleared for entry' });
-    } else {
-      setResult({ status: 'denied', message: '❌ No clearance found' });
-    }
-  };
+  const handleCheck = async () => {
+  if (!query.trim()) return;
+
+  try {
+    const response = await fetch(`https://script.google.com/macros/library/d/1IlPHIYQZGg4ShQqa7L6Qp12v1XWtBh9YYHBooKDtDGZe9KAfPeR8g3ym/2?query=${encodeURIComponent(query.trim())}`);
+    const data = await response.json();
+    setResult(data);
+  } catch (err) {
+    setResult({ status: 'denied', message: 'Error checking clearance ❌' });
+  }
+};
+
 
   if (!authenticated) {
     return (
