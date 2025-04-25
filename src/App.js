@@ -57,7 +57,8 @@ function App() {
   return (
     <div className="App">
       <div className="content">
-        <img src="new-logo.png" alt="Logo" className="logo" />
+        {/* Make sure the path to the logo is correct, and placed inside the 'public' folder */}
+        <img src="/new-logo.png" alt="Logo" className="logo" />
         <h1>Changi Naval Base Access Checker</h1>
 
         {!isAuthenticated ? (
@@ -89,6 +90,8 @@ function App() {
 
             {result && (
               <div className="result">
+                {/* Show Personnel Name */}
+                <p>Personnel: {query}</p>
                 <p>{result.message}</p>
                 {result.status === "allowed" && result.start_date && result.end_date && (
                   <p>
@@ -96,7 +99,7 @@ function App() {
                   </p>
                 )}
                 {result.status === "allowed" && (!result.start_date || !result.end_date) && (
-                  <p>Clearance pending</p> // Show this if either date is missing
+                  <p>Clearance pending</p> {/* Show this if either date is missing */}
                 )}
               </div>
             )}
