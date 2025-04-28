@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./App.css";
 
 function App() {
@@ -7,6 +8,8 @@ function App() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const PASSWORD = "escort9191"; // Required password
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9zp5du0JBY-zOUo6GtCdTzIJNktPs-jr0ufYIRgULke3Dypq1oQITO4E1mf2g7xGciA/exec";
@@ -29,17 +32,27 @@ function App() {
     });
   };
 
+  const isExpired = (endDate) => {
+    const currentDate = new Date();
+    const end = new Date(endDate);
+    return end < currentDate;
+  };
+
   const handleCheck = async () => {
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      alert("Please enter an ID first.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const url = `${SCRIPT_URL}?query=${encodeURIComponent(query.trim())}&password=${PASSWORD}`;
       const response = await fetch(url);
       const data = await response.json();
       
-      console.log(data); // Log the full response to inspect
+      console.log(data);
 
-      // Handle the response data
       if (data.status === "allowed") {
         if (!data.start_date || !data.end_date) {
           data.message = "Clearance pending";
@@ -48,10 +61,32 @@ function App() {
         }
       }
 
+      let companies = [];
+      if (data.company_1) companies.push(data.company_1);
+      if (data.company_2) companies.push(data.company_2);
+      if (data.company_3) companies.push(data.company_3);
+
+      data.company_names = companies.join(" | ");
+
       setResult(data);
     } catch (err) {
       console.error("Fetch error:", err);
       setResult({ status: "error", message: "Error checking clearance ❌" });
+    }
+
+    setIsLoading(false);
+  };
+
+  const formatClearancePeriod = (startDate, endDate) => {
+    if (!startDate || !endDate) return null;
+
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+
+    if (isExpired(endDate)) {
+      return `${formattedStartDate} - ${formattedEndDate} | EXPIRED`;
+    } else {
+      return `${formattedStartDate} - ${formattedEndDate}`;
     }
   };
 
@@ -63,13 +98,22 @@ function App() {
 
         {!isAuthenticated ? (
           <div>
-            <input
-              type="password"
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="inputField"
-            />
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="inputField"
+              />
+              <button
+                type="button"
+                className="revealButton"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             <button onClick={handleLogin} className="checkButton">
               Enter
             </button>
@@ -81,20 +125,27 @@ function App() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Enter ID or Name"
+              placeholder="Enter FIN or NRIC"
               className="inputField"
             />
             <button onClick={handleCheck} className="checkButton">
-              Check Access
+              {isLoading ? (
+                <div className="spinner"></div>
+              ) : (
+                "Check Access"
+              )}
             </button>
 
             {result && (
               <div className="result">
                 <p><strong>Name:</strong> {result.name || "Unknown"}</p>
+                {result.company_names && (
+                  <p><strong>Company:</strong> {result.company_names}</p>
+                )}
                 <p>{result.message}</p>
                 {result.status === "allowed" && result.start_date && result.end_date ? (
                   <p>
-                    Clearance Period: {formatDate(result.start_date)} - {formatDate(result.end_date)}
+                    Clearance Period: {formatClearancePeriod(result.start_date, result.end_date)}
                   </p>
                 ) : (
                   result.status === "allowed" && <p>Clearance pending</p>

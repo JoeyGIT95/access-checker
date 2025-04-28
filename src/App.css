@@ -26,8 +26,9 @@ h1 {
 .logo {
   display: block;
   margin: 20px auto;
-  max-width: 150px;
-  height: auto;
+  max-width: 250px;
+  margin-left: 45px;
+  margin-right: 40px;
 }
 
 /* Centered content wrapper */
@@ -38,6 +39,7 @@ h1 {
   background-color: #2c2c2c;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: relative; /* Needed for absolute elements inside */
 }
 
 /* Input field styles */
@@ -66,11 +68,53 @@ h1 {
   border-radius: 4px;
   width: 100%;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .checkButton:hover {
   background-color: #149c6f;
 }
+
+/* Password reveal button with eye icon */
+.revealButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+.revealButton:hover {
+  color: #1f8d7d; /* hover color same as your button green */
+}
+
+/* Eye icon styling */
+.revealButton i {
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+/* Spinner styling */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ffffff;
+  border-top: 3px solid #1f8d7d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 /* Result area */
 .result {
@@ -91,16 +135,17 @@ h1 {
   }
 
   .logo {
-    width: 60vw; /* Use viewport width for responsiveness */
-    max-width: 200px; /* Set a max width */
-    height: auto; /* Keep the aspect ratio intact */
+    width: 60vw;
+    max-width: 200px;
+    height: auto;
   }
 
   h1 {
     font-size: 1.5rem;
   }
 
-  .checkButton, .inputField {
+  .checkButton,
+  .inputField {
     font-size: 0.9rem;
   }
 }
