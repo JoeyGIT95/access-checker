@@ -137,43 +137,35 @@ function App() {
             </button>
 
             {result && (
-  <div
-    className="result"
-    style={{
-      backgroundColor:
-        result.status === "allowed"
-          ? "#d4edda" // green for valid
-          : result.status === "expired"
-          ? "#fff3cd" // yellow for expired
-          : "#f8d7da", // red for error
-      border: "1px solid #ccc",
-      padding: "1rem",
-      borderRadius: "8px",
-      marginTop: "1rem"
-    }}
-  >
-    <p><strong>Name:</strong> {result.name || "Unknown"}</p>
+              <div
+                className={`result ${
+                  result.status === "allowed" &&
+                  !formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
+                    ? "allowed"
+                    : "denied"
+                }`}
+              >
+                <p><strong>Name:</strong> {result.name || "Unknown"}</p>
 
-    {result.company_names && (
-      <p><strong>Company:</strong> {result.company_names}</p>
-    )}
+                {result.company_names && (
+                  <p><strong>Company:</strong> {result.company_names}</p>
+                )}
 
-    <p>
-  {formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
-    ? "Personnel is NOT cleared for entry"
-    : result.message}
-</p>
+                <p>
+                  {formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
+                    ? "Personnel is NOT cleared for entry"
+                    : result.message}
+                </p>
 
-
-    {(result.status === "allowed" || result.status === "expired") && result.start_date && result.end_date ? (
-      <p>
-        Clearance Period: {formatClearancePeriod(result.start_date, result.end_date)}
-      </p>
-    ) : (
-      result.status === "allowed" && <p>Clearance pending</p>
-    )}
-  </div>
-)}
+                {(result.status === "allowed" || result.status === "expired") && result.start_date && result.end_date ? (
+                  <p>
+                    Clearance Period: {formatClearancePeriod(result.start_date, result.end_date)}
+                  </p>
+                ) : (
+                  result.status === "allowed" && <p>Clearance pending</p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
