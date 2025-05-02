@@ -9,9 +9,13 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+<<<<<<< HEAD
     "react-icons": "^5.5.0",
     "react-scripts": "^5.0.1",
     "use-debounce": "^10.0.4",
+=======
+    "react-scripts": "5.0.1",
+>>>>>>> 06fcbc597297ddbbd0fe984e032998d515f314f4
     "web-vitals": "^2.1.4"
   },
   "scripts": {
