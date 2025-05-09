@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import FingerprintJS from "@fingerprintjs/fingerprintjs"; // ✅ Added
 import "./App.css";
 
 function App() {
@@ -10,9 +11,21 @@ function App() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [fingerprint, setFingerprint] = useState(""); // ✅ Added
 
-  const PASSWORD = "escort9191"; // Required password
+  const PASSWORD = "escort9191";
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9zp5du0JBY-zOUo6GtCdTzIJNktPs-jr0ufYIRgULke3Dypq1oQITO4E1mf2g7xGciA/exec";
+
+  // ✅ Load device fingerprint once
+  useEffect(() => {
+    const loadFingerprint = async () => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      setFingerprint(result.visitorId);
+      console.log("Device fingerprint:", result.visitorId);
+    };
+    loadFingerprint();
+  }, []);
 
   const handleLogin = () => {
     if (password === PASSWORD) {
@@ -39,43 +52,44 @@ function App() {
   };
 
   const handleCheck = async () => {
-    if (!query.trim()) {
-      alert("Please enter an ID first.");
-      return;
-    }
+  if (!query.trim()) {
+    alert("Please enter an ID first.");
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      const url = `${SCRIPT_URL}?query=${encodeURIComponent(query.trim())}&password=${PASSWORD}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      console.log(data);
+  try {
+    const userAgent = navigator.userAgent; // ✅ Get browser + OS info
+    const url = `${SCRIPT_URL}?query=${encodeURIComponent(query.trim())}&password=${PASSWORD}&fingerprint=${fingerprint}&useragent=${encodeURIComponent(userAgent)}`; // ✅ Send both
+    const response = await fetch(url);
+    const data = await response.json();
 
-      if (data.status === "allowed") {
-        if (!data.start_date || !data.end_date) {
-          data.message = "Clearance pending";
-          data.start_date = "N/A";
-          data.end_date = "N/A";
-        }
+    console.log(data);
+
+    if (data.status === "allowed") {
+      if (!data.start_date || !data.end_date) {
+        data.message = "Clearance pending";
+        data.start_date = "N/A";
+        data.end_date = "N/A";
       }
-
-      let companies = [];
-      if (data.company_1) companies.push(data.company_1);
-      if (data.company_2) companies.push(data.company_2);
-      if (data.company_3) companies.push(data.company_3);
-
-      data.company_names = companies.join(" | ");
-
-      setResult(data);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setResult({ status: "error", message: "Error checking clearance ❌" });
     }
 
-    setIsLoading(false);
-  };
+    let companies = [];
+    if (data.company_1) companies.push(data.company_1);
+    if (data.company_2) companies.push(data.company_2);
+    if (data.company_3) companies.push(data.company_3);
+
+    data.company_names = companies.join(" | ");
+    setResult(data);
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setResult({ status: "error", message: "Error checking clearance ❌" });
+  }
+
+  setIsLoading(false);
+};
+
 
   const formatClearancePeriod = (startDate, endDate) => {
     if (!startDate || !endDate) return null;
@@ -137,43 +151,35 @@ function App() {
             </button>
 
             {result && (
-  <div
-    className="result"
-    style={{
-      backgroundColor:
-        result.status === "allowed"
-          ? "#d4edda" // green for valid
-          : result.status === "expired"
-          ? "#fff3cd" // yellow for expired
-          : "#f8d7da", // red for error
-      border: "1px solid #ccc",
-      padding: "1rem",
-      borderRadius: "8px",
-      marginTop: "1rem"
-    }}
-  >
-    <p><strong>Name:</strong> {result.name || "Unknown"}</p>
+              <div
+                className={`result ${
+                  result.status === "allowed" &&
+                  !formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
+                    ? "allowed"
+                    : "denied"
+                }`}
+              >
+                <p><strong>Name:</strong> {result.name || "Unknown"}</p>
 
-    {result.company_names && (
-      <p><strong>Company:</strong> {result.company_names}</p>
-    )}
+                {result.company_names && (
+                  <p><strong>Company:</strong> {result.company_names}</p>
+                )}
 
-    <p>
-  {formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
-    ? "Personnel is NOT cleared for entry"
-    : result.message}
-</p>
+                <p>
+                  {formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
+                    ? "Personnel is NOT cleared for entry"
+                    : result.message}
+                </p>
 
-
-    {(result.status === "allowed" || result.status === "expired") && result.start_date && result.end_date ? (
-      <p>
-        Clearance Period: {formatClearancePeriod(result.start_date, result.end_date)}
-      </p>
-    ) : (
-      result.status === "allowed" && <p>Clearance pending</p>
-    )}
-  </div>
-)}
+                {(result.status === "allowed" || result.status === "expired") && result.start_date && result.end_date ? (
+                  <p>
+                    Clearance Period: {formatClearancePeriod(result.start_date, result.end_date)}
+                  </p>
+                ) : (
+                  result.status === "allowed" && <p>Clearance pending</p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
