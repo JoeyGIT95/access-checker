@@ -152,13 +152,17 @@ function App() {
 
             {result && (
               <div
-                className={`result ${
-                  result.status === "allowed" &&
-                  !formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
-                    ? "allowed"
-                    : "denied"
-                }`}
-              >
+  className={`result ${
+    result.status === "pending"
+      ? "pending"
+      : result.status === "allowed" &&
+        !formatClearancePeriod(result.start_date, result.end_date)?.includes("EXPIRED")
+      ? "allowed"
+      : "denied"
+  }`}
+>
+
+
                 <p><strong>Name:</strong> {result.name || "Unknown"}</p>
 
                 {result.company_names && (
